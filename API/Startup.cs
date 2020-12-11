@@ -32,6 +32,18 @@ namespace API
             services.AddDbContext<DataContext>(opt =>{
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
+
+            //Add CORS Ploicy to let react app accept response from our API
+            services.AddCors( opt =>
+            {
+                opt.AddPolicy("CorsPolicy" , policy =>{
+                    //TODO:Use Clientapp domainName instead of localhost
+
+                    policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins("http://localhost:3000");
+                });
+            });
             
             services.AddControllers();
 
@@ -56,6 +68,8 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
