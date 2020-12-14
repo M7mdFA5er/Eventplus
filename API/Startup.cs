@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Activities;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -44,6 +46,9 @@ namespace API
                     .WithOrigins("http://localhost:3000");
                 });
             });
+
+            //except we have many handlers we need to tell services about only one
+            services.AddMediatR(typeof(List.Handler).Assembly);
             
             services.AddControllers();
 
