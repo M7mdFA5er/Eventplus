@@ -54,6 +54,7 @@ namespace API
 
             services.AddSwaggerGen(c =>
             {
+                c.CustomSchemaIds(type => type.ToString()); //Add To solve The same schemaId is already used for type Problem
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
         }
