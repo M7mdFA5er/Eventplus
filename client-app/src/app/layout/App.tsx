@@ -23,22 +23,31 @@ const App = () => {
   };
 
   const handleCreateActivity = (activity: IActivity) => {
-    setActivities([...activities, activity]);
-    setSelectedActivity(activity);
-    setEditMode(false);
+    //TODO: Change that to Create Guid in Server Side and send back the activity to client
+    //* This Method Create Activity At ClientSide including Guid(id)
+    //* This May Be a Secuirty/Logical Flaw that this Id may be change or duplicated with another (id)
+    agent.Activities.create(activity).then(() => {
+      setActivities([...activities, activity]);
+      setSelectedActivity(activity);
+      setEditMode(false);
+    });
   };
 
   const handleEditActivity = (activity: IActivity) => {
-    setActivities([
-      ...activities.filter((a) => a.id !== activity.id),
-      activity,
-    ]);
-    setSelectedActivity(activity);
-    setEditMode(false);
+    agent.Activities.update(activity).then(() => {
+      setActivities([
+        ...activities.filter((a) => a.id !== activity.id),
+        activity,
+      ]);
+      setSelectedActivity(activity);
+      setEditMode(false);
+    });
   };
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter((a) => a.id !== id)]);
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter((a) => a.id !== id)]);
+    });
   };
 
   useEffect(() => {
