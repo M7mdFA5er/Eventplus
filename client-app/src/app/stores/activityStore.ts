@@ -4,6 +4,7 @@ import { createContext } from "react";
 import agent from '../api/agent';
 
 class ActivityStore {
+  @observable activityRegistry = new Map();
   @observable activities: IActivity[] = [];
   @observable selectedActivity: IActivity | undefined;
   @observable loadingInitial = false;
@@ -12,7 +13,7 @@ class ActivityStore {
 
 
   @computed get activitiesByDate() {
-    return this.activities.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+    return Array.from(this.activityRegistry.values()).sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
   }
 
 
@@ -22,7 +23,8 @@ class ActivityStore {
       const activities = await agent.Activities.list();
       activities.forEach((activity) => {
         activity.date = activity.date.split(".")[0];
-        this.activities.push(activity);
+        //this.activities.push(activity);
+        this.activityRegistry.set(activity.id, activity);
       });
       this.loadingInitial = false;
     } catch (error) {
@@ -38,7 +40,7 @@ class ActivityStore {
       //* This Method Create Activity At ClientSide including Guid(id)
       //* This May Be a Secuirty/Logical Flaw that this Id may be change or duplicated with another (id)
       await agent.Activities.create(activity);
-      this.activities.push(activity);
+      this.activityRegistry.set(activity.id, activity);
       this.editMode = false;
       this.submitting = false;
     } catch (error) {
@@ -55,7 +57,7 @@ class ActivityStore {
 
 
   @action selectActivity = (id: string) => {
-    this.selectedActivity = this.activities.find(a => a.id === id);
+    this.selectedActivity = this.activityRegistry.get(id);
     this.editMode = false;
   }
 
