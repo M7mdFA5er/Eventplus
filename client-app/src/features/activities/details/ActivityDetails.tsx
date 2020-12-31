@@ -4,17 +4,13 @@ import { Button, Card, Image } from "semantic-ui-react";
 import { IActivity } from "../../../app/models/activity";
 import ActivityStore from "../../../app/stores/activityStore";
 
-interface IProps {
-  setEditMode: (editMode: boolean) => void;
-  setSelectedActivity: (activity: IActivity | null) => void;
-}
-
-const ActivityDetails: React.FC<IProps> = ({
-  setEditMode,
-  setSelectedActivity,
-}) => {
+const ActivityDetails: React.FC = () => {
   const activityStore = useContext(ActivityStore);
-  const {selectedActivity: activity} = activityStore;
+  const {
+    selectedActivity: activity,
+    openEditForm,
+    cancelSelectedActivity,
+  } = activityStore;
 
   return (
     <Card fluid>
@@ -36,13 +32,13 @@ const ActivityDetails: React.FC<IProps> = ({
             basic
             color="blue"
             content="Edit"
-            onClick={() => setEditMode(true)}
+            onClick={() => openEditForm(activity!.id)}
           />
           <Button
             basic
             color="grey"
             content="Cancel"
-            onClick={() => setSelectedActivity(null)}
+            onClick={cancelSelectedActivity}
           />
         </Button.Group>
       </Card.Content>
@@ -50,4 +46,4 @@ const ActivityDetails: React.FC<IProps> = ({
   );
 };
 
-export default  observer(ActivityDetails);
+export default observer(ActivityDetails);
