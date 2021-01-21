@@ -5,10 +5,13 @@ import { NavBar } from "../../features/nav/NavBar";
 import ActivityDashboard from "../../features/activities/dashboard/ActivityDashboard";
 import agent from "../api/agent";
 import LoadingComponent from "./LoadingComponent";
+import { connect } from "react-redux";
+import { loadActivities } from "../../redux/actions/activityActions";
 
-const App = () => {
+const App = (props: any) => {
+  const { loadActivities, activities1 } = props;
   //*States
-  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [activities, setActivities] = useState<IActivity[]>(activities1);
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(
     null
   );
@@ -74,17 +77,19 @@ const App = () => {
   };
 
   useEffect(() => {
-    agent.Activities.list()
-      .then((response) => {
-        let activities: IActivity[] = [];
-        response.forEach((activity) => {
-          activity.date = activity.date.split(".")[0];
-          activities.push(activity);
-        });
-        setActivities(activities);
-      })
-      .then(() => setLoading(false));
-  }, []);
+    // agent.Activities.list()
+    //   .then((response) => {
+    //     let activities: IActivity[] = [];
+    //     response.forEach((activity) => {
+    //       activity.date = activity.date.split(".")[0];
+    //       activities.push(activity);
+    //     });
+    //     setActivities(activities);
+    //   })
+    //   .then(() => setLoading(false));
+    loadActivities();
+    setLoading(false);
+  }, [loadActivities]);
 
   if (loading) return <LoadingComponent content="Loading Activities..." />;
 
@@ -93,7 +98,7 @@ const App = () => {
       <NavBar openCreateForm={handleOpenCreateForm} />
       <Container style={{ marginTop: "7em" }}>
         <ActivityDashboard
-          activities={activities}
+          activities={props.activities1}
           selectActivity={handleSelectActivity}
           selectedActivity={selectedActivity}
           editMode={editMode}
@@ -110,4 +115,14 @@ const App = () => {
   );
 };
 
-export default App;
+const mapStateToProps = (state: any) => {
+  return {
+    activities1: state.activityReducer.activities,
+  };
+};
+
+const mapDispatchToProps = {
+  loadActivities,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
